@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>大OS 報價系統 BIBLE</title>
+<style>
+:root{
+  --ink:#1f2a37; --muted:#6b7280; --line:#e5e7eb; --bg:#f6f7f9; --card:#ffffff;
+  --brand:#0f766e; --brand2:#14b8a6; --accent:#f59e0b; --warn:#dc2626; --note:#2563eb;
+  --l1:#0f766e; --l2:#0ea5a4; --l3:#5eead4;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Calibri,"Microsoft JhengHei","微軟正黑體","Segoe UI",sans-serif;font-size:11pt;color:var(--ink);background:var(--bg);line-height:1.65}
+a{color:var(--brand);text-decoration:none}
+code{font-family:Consolas,Calibri,monospace;background:#eef2f1;color:#0f766e;padding:1px 6px;border-radius:5px;font-size:.95em}
+/* layout */
+.wrap{display:flex;min-height:100vh}
+.side{width:268px;flex:none;position:sticky;top:0;height:100vh;overflow:auto;background:#0b1f1d;color:#cbd5d1;padding:18px 14px}
+.side .logo{font-size:1.25rem;font-weight:700;color:#fff;letter-spacing:.5px;margin:4px 6px 2px}
+.side .logo small{display:block;font-size:.72rem;font-weight:400;color:#7fb8b0;margin-top:3px;letter-spacing:0}
+.search{margin:14px 6px 12px}
+.search input{width:100%;padding:9px 12px;border-radius:9px;border:1px solid #1f3b38;background:#0f2b28;color:#e6f2f0;font-family:inherit;font-size:.95rem}
+.search input::placeholder{color:#6b948e}
+.nav a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;color:#cbd5d1;font-size:.95rem;margin:2px 0}
+.nav a:hover{background:#13332f;color:#fff}
+.nav a.active{background:var(--brand);color:#fff}
+.nav a.hide{display:none}
+.nnum{display:inline-flex;width:22px;height:22px;flex:none;align-items:center;justify-content:center;border-radius:6px;background:#13332f;font-size:.72rem;color:#7fb8b0}
+.nav a.active .nnum{background:#0b6157;color:#fff}
+.main{flex:1;min-width:0;padding:0 0 60px}
+.hero{background:linear-gradient(120deg,#0f766e,#0b1f1d);color:#fff;padding:34px 40px 30px}
+.hero h1{margin:0 0 8px;font-size:1.9rem;letter-spacing:1px}
+.hero p{margin:0;color:#bfe3dd;max-width:760px}
+.hero .meta{margin-top:14px;font-size:.85rem;color:#8fc9c1}
+.container{padding:26px 40px;max-width:1180px}
+/* sections */
+.sec{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:0 0 22px;scroll-margin-top:14px;box-shadow:0 1px 2px rgba(16,40,38,.04)}
+.sec.hide{display:none}
+.sechead{display:flex;align-items:center;gap:12px;border-bottom:2px solid #eef2f1;padding-bottom:12px;margin-bottom:16px}
+.secnum{display:inline-flex;width:34px;height:34px;flex:none;align-items:center;justify-content:center;border-radius:9px;background:var(--brand);color:#fff;font-weight:700}
+.sechead h2{margin:0;font-size:1.32rem;flex:1}
+.sectag{font-size:.74rem;color:var(--brand);background:#e6f4f2;border:1px solid #bfe3dd;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.seccontent{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+@media(max-width:1050px){.seccontent{grid-template-columns:1fr}}
+.textcol ul,.textcol ol{margin:.4em 0;padding-left:1.3em}
+.textcol li{margin:.3em 0}
+.textcol p{margin:.5em 0}
+.muted{color:var(--muted)}
+.imgcol{display:flex;flex-direction:column;gap:12px}
+.figwrap{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fafafa}
+.shot{display:block;width:100%;cursor:zoom-in}
+/* callouts */
+.callout{border-radius:10px;padding:11px 14px;margin:14px 0;font-size:.97rem;border:1px solid}
+.callout.tip{background:#ecfdf5;border-color:#a7f3d0}
+.callout.warn{background:#fef2f2;border-color:#fecaca}
+.callout.note{background:#eff6ff;border-color:#bfdbfe}
+/* layers */
+.layers{display:flex;flex-direction:column;gap:0;margin:8px 0}
+.layer{display:flex;gap:0;border-radius:10px;overflow:hidden;margin-bottom:10px;border:1px solid var(--line)}
+.lh{flex:none;width:140px;padding:12px 14px;color:#fff;font-weight:700;font-size:1.05rem;display:flex;flex-direction:column;justify-content:center}
+.lh span{font-size:.78rem;font-weight:400;opacity:.9;margin-top:2px}
+.lbd{flex:1;padding:12px 14px;background:#fff;font-size:.95rem}
+.layer.l1 .lh{background:#0f766e}.layer.l2 .lh{background:#0ea5a4}.layer.l3 .lh{background:#5eead4;color:#06403a}
+/* flow list */
+ol.flow{counter-reset:step;list-style:none;padding-left:0}
+ol.flow li{position:relative;padding:10px 12px 10px 44px;background:#f8fafa;border:1px solid var(--line);border-radius:9px;margin:8px 0}
+ol.flow li::before{counter-increment:step;content:counter(step);position:absolute;left:10px;top:10px;width:24px;height:24px;background:var(--brand);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700}
+/* grids */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+@media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr}}
+.mini{background:#f8fafa;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-size:.9rem}
+.mini .k{display:block;font-weight:700;color:var(--brand);margin-bottom:3px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.card .ct{font-weight:700;margin-bottom:6px;color:var(--ink)}
+.bomfmt{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.bf{background:#0f2b28;color:#d7eeea;border-radius:8px;padding:9px 12px;font-size:.86rem;font-family:Calibri,Consolas,monospace}
+.bf .bft{display:inline-block;background:#14b8a6;color:#03211d;font-weight:700;padding:1px 8px;border-radius:6px;margin-right:8px;font-family:Calibri,"Microsoft JhengHei",sans-serif}
+/* tips list */
+ol.tips{counter-reset:tip;list-style:none;padding-left:0;margin:6px 0}
+ol.tips>li{position:relative;padding:10px 12px 10px 40px;border:1px solid var(--line);border-left:3px solid var(--brand2);border-radius:8px;margin:8px 0;background:#fff}
+ol.tips>li::before{counter-increment:tip;content:counter(tip);position:absolute;left:9px;top:10px;width:22px;height:22px;background:#0f766e;color:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700}
+ol.tips b.t{display:block;margin-bottom:2px}
+/* tags */
+.tag{display:inline-block;font-size:.7rem;background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:6px;padding:0 6px;margin-left:6px;vertical-align:middle}
+.tag.tbc{background:#e0f2fe;color:#075985;border-color:#bae6fd}
+/* pain table */
+.paintbl{width:100%;border-collapse:collapse;margin:8px 0;font-size:.92rem}
+.paintbl th,.paintbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.paintbl th{background:#0f2b28;color:#d7eeea;font-weight:700;white-space:nowrap}
+.paintbl tr:nth-child(even) td{background:#f8fafa}
+.paintbl td.fill{color:#9ca3af;font-style:italic}
+.sec.noimg .seccontent{grid-template-columns:1fr}
+/* pain add form */
+.painform{display:grid;grid-template-columns:1.5fr 1.5fr 1.5fr .9fr auto;gap:9px;margin:12px 0 4px;align-items:end}
+@media(max-width:760px){.painform{grid-template-columns:1fr}}
+.painform label{display:flex;flex-direction:column;font-size:.78rem;color:var(--muted);gap:3px}
+.painform input{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:.92rem}
+.painform input:focus{outline:none;border-color:var(--brand2);box-shadow:0 0 0 3px rgba(20,184,166,.15)}
+.btn{cursor:pointer;border:none;border-radius:8px;padding:9px 16px;font-family:inherit;font-size:.9rem;font-weight:700;background:var(--brand);color:#fff;white-space:nowrap}
+.btn:hover{background:#0b6157}
+.btn.ghost{background:#eef2f1;color:var(--brand)}
+.btn.ghost:hover{background:#dceae7}
+.btn.del{background:transparent;color:#dc2626;font-weight:400;padding:3px 9px;font-size:.82rem;border:1px solid #fecaca;border-radius:6px}
+.btn.del:hover{background:#fef2f2}
+.painbar{display:flex;gap:10px;margin:8px 0 0;flex-wrap:wrap}
+/* footer / disclaimer */
+.disc{margin:24px 40px;padding:16px 20px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;font-size:.9rem;color:#7c4a03}
+.disc b{color:#9a3412}
+/* lightbox */
+.lb{position:fixed;inset:0;background:rgba(8,18,17,.92);display:none;align-items:center;justify-content:center;z-index:99;cursor:zoom-out;padding:24px}
+.lb.open{display:flex}
+.lb img{max-width:96%;max-height:96%;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.toc-mini{display:none}
+@media(max-width:860px){
+  .side{display:none}
+  .topbar{display:flex}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="side">
+    <div class="logo">大OS BIBLE<small>報價作業基本說明 · 一看就懂版</small></div>
+    <div class="search"><input id="q" type="search" placeholder="🔍 搜尋章節 / 關鍵字…" autocomplete="off"></div>
+    <nav class="nav" id="nav"><a href="#intro" data-search="大OS 是什麼"><span class="nnum">0</span>大OS 是什麼</a>
+<a href="#quickstart" data-search="快速上手：先學這幾招"><span class="nnum">1</span>快速上手：先學這幾招</a>
+<a href="#install" data-search="安裝大OS"><span class="nnum">2</span>安裝大OS</a>
+<a href="#notion" data-search="使用攻略 Notion"><span class="nnum">3</span>使用攻略 Notion</a>
+<a href="#structure" data-search="設計結構：三階層"><span class="nnum">4</span>設計結構：三階層</a>
+<a href="#flow" data-search="報價基本操作流程"><span class="nnum">5</span>報價基本操作流程</a>
+<a href="#group1" data-search="畫面功能 — Group Level (1/3)"><span class="nnum">6</span>畫面功能 — Group Level (1/3)</a>
+<a href="#group2" data-search="畫面功能 — Group Level (2/3)"><span class="nnum">7</span>畫面功能 — Group Level (2/3)</a>
+<a href="#group3" data-search="畫面功能 — Group Level (3/3)"><span class="nnum">8</span>畫面功能 — Group Level (3/3)</a>
+<a href="#devstyle" data-search="畫面功能 — Dev. Style Level"><span class="nnum">9</span>畫面功能 — Dev. Style Level</a>
+<a href="#option1" data-search="畫面功能 — Option Level (1/2)"><span class="nnum">10</span>畫面功能 — Option Level (1/2)</a>
+<a href="#option2" data-search="畫面功能 — Option Level (2/2)"><span class="nnum">11</span>畫面功能 — Option Level (2/2)</a>
+<a href="#copy" data-search="複製 Dev. Style / Option"><span class="nnum">12</span>複製 Dev. Style / Option</a>
+<a href="#tpcompare" data-search="TP Compare（置換新 TP 比對）"><span class="nnum">13</span>TP Compare（置換新 TP 比對）</a>
+<a href="#merge" data-search="Merge Options（合併選項）"><span class="nnum">14</span>Merge Options（合併選項）</a>
+<a href="#batch" data-search="舊報價轉入大OS"><span class="nnum">15</span>舊報價轉入大OS</a>
+<a href="#painpoints" data-search="目前使用系統遇到的痛點"><span class="nnum">16</span>目前使用系統遇到的痛點</a></nav>
+  </aside>
+  <div class="main">
+    <div class="hero">
+      <h1>大OS 報價系統 BIBLE</h1>
+      <p>聚陽成衣開發報價系統（Quotation v3）操作懶人包：三階層結構、報價六步驟、各畫面功能、複製 / TP Compare / Merge Options / 舊報價轉入，一頁看懂。</p>
+      <div class="meta">資料來源：《大OS報價作業基本說明手冊 2026-05-04》＋ Merge Options 教學影片　|　整理：AI 輔助（需人工複核）</div>
+    </div>
+    <div class="container" id="content">
+      
+<section class="sec" id="intro" data-text="大OS 是什麼 
+&lt;p&gt;&lt;b&gt;大OS&lt;/b&gt;（Quotation v3）是聚陽的&lt;b&gt;成衣開發報價系統&lt;/b&gt;。它把一張報價單拆成三個階層來管理，
+從 TP/FP 匯入、BOM 建檔、成本回收，到目標 FOB 試算、Recap 與客製表單匯出，整條報價作業都在同一個系統裡完成。&lt;/p&gt;
+&lt;div class=&quot;callout tip&quot;&gt;&lt;b&gt;這本 BIBLE 怎麼用？&lt;/b&gt;左側目錄點章節即可跳轉；上方搜尋框可快速找關鍵字（如「FOB」「Merge」「TP」）。每個章節都附上系統實際畫面，照著圖上箭頭操作即可。&lt;/div&gt;
+&lt;div class=&quot;grid3&quot;&gt;
+  &lt;div class=&quot;mini&quot;&gt;&lt;span class=&quot;k&quot;&gt;三階層&lt;/span&gt;Group → Dev Style → Option&lt;/div&gt;
+  &lt;div class=&quot;mini&quot;&gt;&lt;span class=&quot;k&quot;&gt;核心動作&lt;/span&gt;建款 → BOM → 成本 → FOB → Recap&lt;/div&gt;
+  &lt;div class=&quot;mini&quot;&gt;&lt;span class=&quot;k&quot;&gt;輔助查詢&lt;/span&gt;Notion 攻略 + 本 BIBLE&lt;/div&gt;
+&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">0</span><h2>大OS 是什麼</h2><span class="sectag">入門</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p><b>大OS</b>（Quotation v3）是聚陽的<b>成衣開發報價系統</b>。它把一張報價單拆成三個階層來管理，
+從 TP/FP 匯入、BOM 建檔、成本回收，到目標 FOB 試算、Recap 與客製表單匯出，整條報價作業都在同一個系統裡完成。</p>
+<div class="callout tip"><b>這本 BIBLE 怎麼用？</b>左側目錄點章節即可跳轉；上方搜尋框可快速找關鍵字（如「FOB」「Merge」「TP」）。每個章節都附上系統實際畫面，照著圖上箭頭操作即可。</div>
+<div class="grid3">
+  <div class="mini"><span class="k">三階層</span>Group → Dev Style → Option</div>
+  <div class="mini"><span class="k">核心動作</span>建款 → BOM → 成本 → FOB → Recap</div>
+  <div class="mini"><span class="k">輔助查詢</span>Notion 攻略 + 本 BIBLE</div>
+</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="大OS 是什麼" src="assets/page_01.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec noimg" id="quickstart" data-text="快速上手：先學這幾招 
+&lt;div class=&quot;callout tip&quot;&gt;&lt;b&gt;第一次用大OS？先記下面這幾招就能動起來。&lt;/b&gt;其他看不懂的功能&lt;b&gt;先跳過&lt;/b&gt;，等實際操作到再回頭查後面的「畫面功能」章節即可，不用一開始就全部背。&lt;/div&gt;
+&lt;div class=&quot;grid2&quot;&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;ct&quot;&gt;🖱️ 右鍵就能複製，不用重 key&lt;/div&gt;在 Dev. Style 或 Option 上&lt;b&gt;按滑鼠右鍵&lt;/b&gt;：&lt;br&gt;&lt;b&gt;Copy Option as New&lt;/b&gt;＝複製一筆 Option；&lt;b&gt;All Options&lt;/b&gt;＝連同整個款號的所有 Option 一起複製。&lt;span class=&quot;muted&quot;&gt;→ 詳見「複製 Dev. Style/Option」章&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;ct&quot;&gt;⌨️ 算 FOB 一定要按 Enter&lt;/div&gt;輸入訂單 &lt;b&gt;Qty / IE&lt;/b&gt; 後，&lt;b&gt;按鍵盤 Enter 才會 Calculate&lt;/b&gt;；沒按數字不會更新。&lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;ct&quot;&gt;🔒 報好的價想鎖住&lt;/div&gt;把 Option 設成 &lt;b&gt;Close&lt;/b&gt;，可保留當下成本，下次開 Group 不會被重算掉。&lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;ct&quot;&gt;👀 先預覽、要改再開&lt;/div&gt;只想看用&lt;b&gt;預覽模式&lt;/b&gt;；要編輯時&lt;b&gt;只勾選需要的 Option 再開 Group&lt;/b&gt;，比較快，也避免卡權限（一個 Group 一次只允許一人編輯）。&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;callout note&quot;&gt;&lt;b&gt;三層觀念先有個底：&lt;/b&gt;Group（報價群組）→ Dev Style（款號）→ Option（選配/成本算在這層）。看不懂沒關係，下一章有圖。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">1</span><h2>快速上手：先學這幾招</h2><span class="sectag">新手必看</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<div class="callout tip"><b>第一次用大OS？先記下面這幾招就能動起來。</b>其他看不懂的功能<b>先跳過</b>，等實際操作到再回頭查後面的「畫面功能」章節即可，不用一開始就全部背。</div>
+<div class="grid2">
+  <div class="card"><div class="ct">🖱️ 右鍵就能複製，不用重 key</div>在 Dev. Style 或 Option 上<b>按滑鼠右鍵</b>：<br><b>Copy Option as New</b>＝複製一筆 Option；<b>All Options</b>＝連同整個款號的所有 Option 一起複製。<span class="muted">→ 詳見「複製 Dev. Style/Option」章</span></div>
+  <div class="card"><div class="ct">⌨️ 算 FOB 一定要按 Enter</div>輸入訂單 <b>Qty / IE</b> 後，<b>按鍵盤 Enter 才會 Calculate</b>；沒按數字不會更新。</div>
+  <div class="card"><div class="ct">🔒 報好的價想鎖住</div>把 Option 設成 <b>Close</b>，可保留當下成本，下次開 Group 不會被重算掉。</div>
+  <div class="card"><div class="ct">👀 先預覽、要改再開</div>只想看用<b>預覽模式</b>；要編輯時<b>只勾選需要的 Option 再開 Group</b>，比較快，也避免卡權限（一個 Group 一次只允許一人編輯）。</div>
+</div>
+<div class="callout note"><b>三層觀念先有個底：</b>Group（報價群組）→ Dev Style（款號）→ Option（選配/成本算在這層）。看不懂沒關係，下一章有圖。</div>
+</div>
+    <div class="imgcol"></div>
+  </div>
+</section>
+
+<section class="sec" id="install" data-text="安裝大OS 
+&lt;ul&gt;
+  &lt;li&gt;安裝連結：&lt;code&gt;http://nt-net2/quotationv3/new%20os.application&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;或直接使用桌面的&lt;b&gt;「小房子」&lt;/b&gt;圖示登入。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;callout tip&quot;&gt;建議把大OS&lt;b&gt;釘選到工作列&lt;/b&gt;，之後開啟更方便。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">2</span><h2>安裝大OS</h2><span class="sectag">設定</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<ul>
+  <li>安裝連結：<code>http://nt-net2/quotationv3/new%20os.application</code></li>
+  <li>或直接使用桌面的<b>「小房子」</b>圖示登入。</li>
+</ul>
+<div class="callout tip">建議把大OS<b>釘選到工作列</b>，之後開啟更方便。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="安裝大OS" src="assets/page_03.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="notion" data-text="使用攻略 Notion 
+&lt;p&gt;公司提供 &lt;b&gt;Notion&lt;/b&gt; 讓大家查詢大OS 的問題，提過的疑難雜症都會逐步更新上去。&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;&amp;lt;大OS使用攻略&amp;gt;&lt;/b&gt;：使用大OS 會遇到的問題，多半能在這頁找到答案。&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;&amp;lt;Notion使用說明&amp;gt;&lt;/b&gt;：教你如何用 Notion 查詢大OS 的疑問。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;callout note&quot;&gt;本 BIBLE 內凡標示 🔗 的項目，原手冊都對應一篇 Notion 詳解，遇到細節請回查 Notion。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">3</span><h2>使用攻略 Notion</h2><span class="sectag">查詢</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>公司提供 <b>Notion</b> 讓大家查詢大OS 的問題，提過的疑難雜症都會逐步更新上去。</p>
+<ul>
+  <li><b>&lt;大OS使用攻略&gt;</b>：使用大OS 會遇到的問題，多半能在這頁找到答案。</li>
+  <li><b>&lt;Notion使用說明&gt;</b>：教你如何用 Notion 查詢大OS 的疑問。</li>
+</ul>
+<div class="callout note">本 BIBLE 內凡標示 🔗 的項目，原手冊都對應一篇 Notion 詳解，遇到細節請回查 Notion。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="使用攻略 Notion" src="assets/page_04.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="structure" data-text="設計結構：三階層 
+&lt;p&gt;大OS 的資料結構由上而下分三層，理解這三層是看懂整個系統的關鍵：&lt;/p&gt;
+&lt;div class=&quot;layers&quot;&gt;
+  &lt;div class=&quot;layer l1&quot;&gt;&lt;div class=&quot;lh&quot;&gt;Group&lt;span&gt;報價群組&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;lbd&quot;&gt;一張報價單的整體條件：&lt;b&gt;季節&lt;/b&gt;、&lt;b&gt;客戶/品牌&lt;/b&gt; 的基本設定。最上層的容器。&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;layer l2&quot;&gt;&lt;div class=&quot;lh&quot;&gt;Dev Style&lt;span&gt;開發款號&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;lbd&quot;&gt;&lt;b&gt;款號&lt;/b&gt;、款式描述（如 Woven Golf Romper）、&lt;b&gt;Gender / Product Item&lt;/b&gt;。一個 Group 下可有多個款號。&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;layer l3&quot;&gt;&lt;div class=&quot;lh&quot;&gt;Option&lt;span&gt;選配項目&lt;/span&gt;&lt;/div&gt;&lt;div class=&quot;lbd&quot;&gt;同一款號下的不同配置：&lt;b&gt;布料/印花&lt;/b&gt;、&lt;b&gt;IE 做工&lt;/b&gt;、&lt;b&gt;配件&lt;/b&gt;、&lt;b&gt;特工&lt;/b&gt;。報價成本實際算在這一層。&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">4</span><h2>設計結構：三階層</h2><span class="sectag">核心觀念</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>大OS 的資料結構由上而下分三層，理解這三層是看懂整個系統的關鍵：</p>
+<div class="layers">
+  <div class="layer l1"><div class="lh">Group<span>報價群組</span></div><div class="lbd">一張報價單的整體條件：<b>季節</b>、<b>客戶/品牌</b> 的基本設定。最上層的容器。</div></div>
+  <div class="layer l2"><div class="lh">Dev Style<span>開發款號</span></div><div class="lbd"><b>款號</b>、款式描述（如 Woven Golf Romper）、<b>Gender / Product Item</b>。一個 Group 下可有多個款號。</div></div>
+  <div class="layer l3"><div class="lh">Option<span>選配項目</span></div><div class="lbd">同一款號下的不同配置：<b>布料/印花</b>、<b>IE 做工</b>、<b>配件</b>、<b>特工</b>。報價成本實際算在這一層。</div></div>
+</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="設計結構：三階層" src="assets/page_05.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="flow" data-text="報價基本操作流程 
+&lt;p&gt;一筆報價從建款到產出表單，標準走六大步驟：&lt;/p&gt;
+&lt;ol class=&quot;flow&quot;&gt;
+  &lt;li&gt;&lt;b&gt;建立 Style&lt;/b&gt;：TP/FP 匯入 or 自行建立 → &lt;span class=&quot;muted&quot;&gt;Dev. Style Info 存檔（Program、Product Item、Gender、W/K、幾套幾件…）&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;BOM Info 調整確認&lt;/b&gt; → &lt;span class=&quot;muted&quot;&gt;Option Info 編輯（布種、成分、幅寬、布重、縮率、特工 Mapping…）&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;SS 群組開單&lt;/b&gt; → &lt;span class=&quot;muted&quot;&gt;IE、YY、SP、3D、樣品、估線、長度副料&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;成本輸入&lt;/b&gt;＋ &lt;b&gt;IE/(SMV)/YY/SP 回收&lt;/b&gt; → &lt;span class=&quot;muted&quot;&gt;主副料/特工價、CM、PFT、MISC…&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;目標 FOB 輸入 / 檢視 Costing BD&lt;/b&gt; ＋ 成本調整 → &lt;span class=&quot;muted&quot;&gt;Option Remark、Qty&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Order Recap 匯出整理&lt;/b&gt; → 報價水位檢視 → 客製表單匯出（CBD 等）&lt;span class=&quot;muted&quot;&gt;For 發落開單&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&quot;callout tip&quot;&gt;&lt;b&gt;CF 款式&lt;/b&gt;可直接從&lt;b&gt;舊報價轉入&lt;/b&gt;使用（見最後一章）。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">5</span><h2>報價基本操作流程</h2><span class="sectag">流程</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>一筆報價從建款到產出表單，標準走六大步驟：</p>
+<ol class="flow">
+  <li><b>建立 Style</b>：TP/FP 匯入 or 自行建立 → <span class="muted">Dev. Style Info 存檔（Program、Product Item、Gender、W/K、幾套幾件…）</span></li>
+  <li><b>BOM Info 調整確認</b> → <span class="muted">Option Info 編輯（布種、成分、幅寬、布重、縮率、特工 Mapping…）</span></li>
+  <li><b>SS 群組開單</b> → <span class="muted">IE、YY、SP、3D、樣品、估線、長度副料</span></li>
+  <li><b>成本輸入</b>＋ <b>IE/(SMV)/YY/SP 回收</b> → <span class="muted">主副料/特工價、CM、PFT、MISC…</span></li>
+  <li><b>目標 FOB 輸入 / 檢視 Costing BD</b> ＋ 成本調整 → <span class="muted">Option Remark、Qty</span></li>
+  <li><b>Order Recap 匯出整理</b> → 報價水位檢視 → 客製表單匯出（CBD 等）<span class="muted">For 發落開單</span></li>
+</ol>
+<div class="callout tip"><b>CF 款式</b>可直接從<b>舊報價轉入</b>使用（見最後一章）。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="報價基本操作流程" src="assets/page_06.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="group1" data-text="畫面功能 — Group Level (1/3) 
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;建立新的 Group&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;設定 Group 產區比例&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;只打開需要編輯的 Option，提升編輯效率：&lt;b&gt;1. 勾選 Option → 2. 開啟 Group&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;預覽模式&lt;/b&gt;可快速瀏覽。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;callout warn&quot;&gt;&lt;b&gt;一個 Group 同時只允許一位 User 編輯&lt;/b&gt;，避免互相覆蓋。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">6</span><h2>畫面功能 — Group Level (1/3)</h2><span class="sectag">畫面</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<ul>
+  <li><b>建立新的 Group</b>。</li>
+  <li><b>設定 Group 產區比例</b>。</li>
+  <li>只打開需要編輯的 Option，提升編輯效率：<b>1. 勾選 Option → 2. 開啟 Group</b>。</li>
+  <li><b>預覽模式</b>可快速瀏覽。</li>
+</ul>
+<div class="callout warn"><b>一個 Group 同時只允許一位 User 編輯</b>，避免互相覆蓋。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="畫面功能 — Group Level (1/3)" src="assets/page_07.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="group2" data-text="畫面功能 — Group Level (2/3) 
+&lt;p&gt;Group 上方工具列的匯入/建立功能：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;🔗 &lt;b&gt;抓取舊 Option 資料匯入&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;🔗 &lt;b&gt;Recap Excel 匯入&lt;/b&gt;　🔗 &lt;b&gt;FastPak 匯入&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;自行建立 Style&lt;/b&gt;　&lt;b&gt;TP 匯入&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;退出 Group&lt;/b&gt;　&lt;b&gt;全部 Option 存檔&lt;/b&gt;&lt;/li&gt;
+&lt;/ul&gt;
+">
+  <div class="sechead"><span class="secnum">7</span><h2>畫面功能 — Group Level (2/3)</h2><span class="sectag">畫面</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>Group 上方工具列的匯入/建立功能：</p>
+<ul>
+  <li>🔗 <b>抓取舊 Option 資料匯入</b></li>
+  <li>🔗 <b>Recap Excel 匯入</b>　🔗 <b>FastPak 匯入</b></li>
+  <li><b>自行建立 Style</b>　<b>TP 匯入</b></li>
+  <li><b>退出 Group</b>　<b>全部 Option 存檔</b></li>
+</ul>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="畫面功能 — Group Level (2/3)" src="assets/page_08.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="group3" data-text="畫面功能 — Group Level (3/3) 
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;隱藏 / 取消隱藏 Option&lt;/b&gt;、🔗 全選 / 取消全選、🔗 Style 排序&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Order Recap 匯出&lt;/b&gt;、&lt;b&gt;Qsheet 匯出&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;🔗 &lt;b&gt;主副料批次調整資訊成本&lt;/b&gt;、🔗 &lt;b&gt;Quotation Summary&lt;/b&gt;、&lt;b&gt;客製表單匯出&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;全部 Option 重新計算&lt;/b&gt;&lt;span class=&quot;muted&quot;&gt;（僅重新計算 Active 狀態的 Option）&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;callout note&quot;&gt;&lt;b&gt;批次作業（匯出表單選項內）：&lt;/b&gt;YY 單、IE 單、3D 單批次作業；開 SS 單批次作業&lt;span class=&quot;muted&quot;&gt;（尚在測試中，正式上線再另行通知）&lt;/span&gt;。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">8</span><h2>畫面功能 — Group Level (3/3)</h2><span class="sectag">畫面</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<ul>
+  <li><b>隱藏 / 取消隱藏 Option</b>、🔗 全選 / 取消全選、🔗 Style 排序</li>
+  <li><b>Order Recap 匯出</b>、<b>Qsheet 匯出</b></li>
+  <li>🔗 <b>主副料批次調整資訊成本</b>、🔗 <b>Quotation Summary</b>、<b>客製表單匯出</b></li>
+  <li><b>全部 Option 重新計算</b><span class="muted">（僅重新計算 Active 狀態的 Option）</span></li>
+</ul>
+<div class="callout note"><b>批次作業（匯出表單選項內）：</b>YY 單、IE 單、3D 單批次作業；開 SS 單批次作業<span class="muted">（尚在測試中，正式上線再另行通知）</span>。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="畫面功能 — Group Level (3/3)" src="assets/page_09.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="devstyle" data-text="畫面功能 — Dev. Style Level 
+&lt;p&gt;款號（Dev. Style）層級可操作：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;Option 更改排序&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Design 資訊設定&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;隱藏&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;貼上圖片 / 上傳圖片&lt;/b&gt;（款式圖）&lt;/li&gt;
+&lt;/ul&gt;
+">
+  <div class="sechead"><span class="secnum">9</span><h2>畫面功能 — Dev. Style Level</h2><span class="sectag">畫面</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>款號（Dev. Style）層級可操作：</p>
+<ul>
+  <li><b>Option 更改排序</b></li>
+  <li><b>Design 資訊設定</b></li>
+  <li><b>隱藏</b></li>
+  <li><b>貼上圖片 / 上傳圖片</b>（款式圖）</li>
+</ul>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="畫面功能 — Dev. Style Level" src="assets/page_10.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="option1" data-text="畫面功能 — Option Level (1/2) 
+&lt;p&gt;Option 是真正建 BOM、算成本的地方。重點功能：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;檢視目前 TP 資料&lt;/b&gt;、&lt;b&gt;Option 備註&lt;/b&gt;&lt;span class=&quot;muted&quot;&gt;（會顯示在 Group 預覽）&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;BOM Summary&lt;/b&gt;、&lt;b&gt;IE 單搜尋帶入&lt;/b&gt;、&lt;b&gt;IE / SMV 設定&lt;/b&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;主料 FAB / 副料 ACC / 特工 SP&lt;/b&gt;：編輯 BOM 資訊 &amp; 內外價成本&lt;span class=&quot;muted&quot;&gt;（🔗 副料/特工 BOM&amp;成本畫面、🔗 ACC 副料表匯出匯入）&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;SS 文件庫 / SS 群組 / IE 單 / YY 估碼單 / SP 特工單 / 3D 單 / 樣品單 / 估線單 / 長度副料單&lt;/b&gt;　🔗 SS 開單作業、🔗 SS 狀態顏色說明&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Order Confirm / Upload to OS&lt;/b&gt;：進單確認 &amp; 上傳 Option 資料（🔗 進單作業說明）&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Save Option&lt;/b&gt;：Option 存檔&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;bomfmt&quot;&gt;
+  &lt;div class=&quot;bf&quot;&gt;&lt;span class=&quot;bft&quot;&gt;FAB（主料）格式&lt;/span&gt;Cust. FAB ID, FAB Category, FAB Content (Knit/Woven), Full / Cut Width, Weight-BW-UOM, Iron Shrinkage, Supplier, &amp;lt;Internal Cost&amp;gt; $Unit Price/UOM, YY/Pc&lt;/div&gt;
+  &lt;div class=&quot;bf&quot;&gt;&lt;span class=&quot;bft&quot;&gt;ACC（副料）格式&lt;/span&gt;Accessory Name, Acc Desc, &amp;lt;Internal Cost&amp;gt; Cost$/Pc&lt;/div&gt;
+  &lt;div class=&quot;bf&quot;&gt;&lt;span class=&quot;bft&quot;&gt;SP（特工）格式&lt;/span&gt;Special Process (MK), &amp;lt;Internal Cost&amp;gt; Cost$/Pc&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;callout warn&quot;&gt;&lt;b&gt;Close / Active：&lt;/b&gt;把 Option 設為 &lt;b&gt;Close&lt;/b&gt; 可保留當下報價成本，避免下次開啟 Group 時成本變動。&lt;br&gt;切換 Close/Active 時，成本都會依&lt;b&gt;當下公司成本設定重新計算後再存檔&lt;/b&gt;（🔗 Close/Active Option 鎖住報價成本說明）。報價階段註記可留空。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">10</span><h2>畫面功能 — Option Level (1/2)</h2><span class="sectag">畫面</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>Option 是真正建 BOM、算成本的地方。重點功能：</p>
+<ul>
+  <li><b>檢視目前 TP 資料</b>、<b>Option 備註</b><span class="muted">（會顯示在 Group 預覽）</span></li>
+  <li><b>BOM Summary</b>、<b>IE 單搜尋帶入</b>、<b>IE / SMV 設定</b></li>
+  <li><b>主料 FAB / 副料 ACC / 特工 SP</b>：編輯 BOM 資訊 & 內外價成本<span class="muted">（🔗 副料/特工 BOM&成本畫面、🔗 ACC 副料表匯出匯入）</span></li>
+  <li><b>SS 文件庫 / SS 群組 / IE 單 / YY 估碼單 / SP 特工單 / 3D 單 / 樣品單 / 估線單 / 長度副料單</b>　🔗 SS 開單作業、🔗 SS 狀態顏色說明</li>
+  <li><b>Order Confirm / Upload to OS</b>：進單確認 & 上傳 Option 資料（🔗 進單作業說明）</li>
+  <li><b>Save Option</b>：Option 存檔</li>
+</ul>
+<div class="bomfmt">
+  <div class="bf"><span class="bft">FAB（主料）格式</span>Cust. FAB ID, FAB Category, FAB Content (Knit/Woven), Full / Cut Width, Weight-BW-UOM, Iron Shrinkage, Supplier, &lt;Internal Cost&gt; $Unit Price/UOM, YY/Pc</div>
+  <div class="bf"><span class="bft">ACC（副料）格式</span>Accessory Name, Acc Desc, &lt;Internal Cost&gt; Cost$/Pc</div>
+  <div class="bf"><span class="bft">SP（特工）格式</span>Special Process (MK), &lt;Internal Cost&gt; Cost$/Pc</div>
+</div>
+<div class="callout warn"><b>Close / Active：</b>把 Option 設為 <b>Close</b> 可保留當下報價成本，避免下次開啟 Group 時成本變動。<br>切換 Close/Active 時，成本都會依<b>當下公司成本設定重新計算後再存檔</b>（🔗 Close/Active Option 鎖住報價成本說明）。報價階段註記可留空。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="畫面功能 — Option Level (1/2)" src="assets/page_11.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="option2" data-text="畫面功能 — Option Level (2/2) 
+&lt;p&gt;Option 層的&lt;b&gt;目標 FOB 與獲利試算&lt;/b&gt;：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;b&gt;目標 FOB 計算獲利&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;帶入產品 &lt;b&gt;HS Code 稅率、對等關稅&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;[目前為 GAP Inc 專用]&lt;/b&gt; 客人提供的到岸係數；&lt;span class=&quot;muted&quot;&gt;如有 LF，ELC 會以 LF 計算。&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;Planned Area 設定&lt;/b&gt; &amp; 查看產區成本細項。&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;內外價差異比較&lt;/b&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;callout warn&quot;&gt;
+  &lt;b&gt;計算前提：&lt;/b&gt;必須先輸入&lt;b&gt;訂單 Qty / IE&lt;/b&gt; 才能計算；輸入完按&lt;b&gt;鍵盤 Enter&lt;/b&gt; 即 Calculate。&lt;br&gt;
+  &lt;b&gt;運費需自行輸入&lt;/b&gt;，如客人有提供公式可協助設定。&lt;br&gt;
+  &lt;b&gt;紅字&lt;/b&gt;提示：特工有產區、但&lt;b&gt;無標準價&lt;/b&gt;。
+&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">11</span><h2>畫面功能 — Option Level (2/2)</h2><span class="sectag">畫面</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>Option 層的<b>目標 FOB 與獲利試算</b>：</p>
+<ul>
+  <li><b>目標 FOB 計算獲利</b>。</li>
+  <li>帶入產品 <b>HS Code 稅率、對等關稅</b>。</li>
+  <li><b>[目前為 GAP Inc 專用]</b> 客人提供的到岸係數；<span class="muted">如有 LF，ELC 會以 LF 計算。</span></li>
+  <li><b>Planned Area 設定</b> & 查看產區成本細項。</li>
+  <li><b>內外價差異比較</b>。</li>
+</ul>
+<div class="callout warn">
+  <b>計算前提：</b>必須先輸入<b>訂單 Qty / IE</b> 才能計算；輸入完按<b>鍵盤 Enter</b> 即 Calculate。<br>
+  <b>運費需自行輸入</b>，如客人有提供公式可協助設定。<br>
+  <b>紅字</b>提示：特工有產區、但<b>無標準價</b>。
+</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="畫面功能 — Option Level (2/2)" src="assets/page_12.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="copy" data-text="複製 Dev. Style / Option 
+&lt;p&gt;用&lt;b&gt;滑鼠右鍵&lt;/b&gt;就能快速複製，依點擊位置不同有不同選項：&lt;/p&gt;
+&lt;div class=&quot;grid2&quot;&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;ct&quot;&gt;在 &lt;b&gt;Dev. Style 區域&lt;/b&gt;按右鍵&lt;/div&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;b&gt;Empty Option&lt;/b&gt; ⇒ 只複製 Dev. Style 資訊，給一個空白 Option。&lt;/li&gt;
+      &lt;li&gt;&lt;b&gt;All Options&lt;/b&gt; ⇒ 複製 Dev. Style 資訊，&lt;b&gt;並複製該款號的所有 Option&lt;/b&gt;。&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div class=&quot;muted&quot;&gt;＝另存一筆新的 Dev. Style&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;card&quot;&gt;&lt;div class=&quot;ct&quot;&gt;在 &lt;b&gt;Option 區域&lt;/b&gt;按右鍵&lt;/div&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;b&gt;Add Empty Option&lt;/b&gt; ⇒ 新增一個空白 Option。&lt;/li&gt;
+      &lt;li&gt;&lt;b&gt;Copy Option as New&lt;/b&gt; ⇒ 將該 Option 內容複製到新的 Option。&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div class=&quot;muted&quot;&gt;＝在 Style 下新增一筆 Option&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;callout tip&quot;&gt;Copy 時可以&lt;b&gt;勾選要複製的內容&lt;/b&gt;，不必整筆全帶。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">12</span><h2>複製 Dev. Style / Option</h2><span class="sectag">技巧</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>用<b>滑鼠右鍵</b>就能快速複製，依點擊位置不同有不同選項：</p>
+<div class="grid2">
+  <div class="card"><div class="ct">在 <b>Dev. Style 區域</b>按右鍵</div>
+    <ul>
+      <li><b>Empty Option</b> ⇒ 只複製 Dev. Style 資訊，給一個空白 Option。</li>
+      <li><b>All Options</b> ⇒ 複製 Dev. Style 資訊，<b>並複製該款號的所有 Option</b>。</li>
+    </ul>
+    <div class="muted">＝另存一筆新的 Dev. Style</div>
+  </div>
+  <div class="card"><div class="ct">在 <b>Option 區域</b>按右鍵</div>
+    <ul>
+      <li><b>Add Empty Option</b> ⇒ 新增一個空白 Option。</li>
+      <li><b>Copy Option as New</b> ⇒ 將該 Option 內容複製到新的 Option。</li>
+    </ul>
+    <div class="muted">＝在 Style 下新增一筆 Option</div>
+  </div>
+</div>
+<div class="callout tip">Copy 時可以<b>勾選要複製的內容</b>，不必整筆全帶。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="複製 Dev. Style / Option" src="assets/page_13.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="tpcompare" data-text="TP Compare（置換新 TP 比對） 
+&lt;p&gt;當客人換版、發新 TP 時，用 TP Compare 比對新舊差異再決定要不要帶入：&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;點 &lt;b&gt;「…」&lt;/b&gt; 上傳 New TP 進行 Compare。&lt;/li&gt;
+  &lt;li&gt;一筆 TP 若有&lt;b&gt;兩個以上 BOM&lt;/b&gt;，可由該欄選取。&lt;/li&gt;
+  &lt;li&gt;按 &lt;b&gt;Tab&lt;/b&gt; 可切換 Compare 帶入的項目。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&quot;grid3&quot;&gt;
+  &lt;div class=&quot;mini&quot;&gt;&lt;span class=&quot;k&quot;&gt;左：目前 Option 資料&lt;/span&gt;可能已被修改過&lt;/div&gt;
+  &lt;div class=&quot;mini&quot;&gt;&lt;span class=&quot;k&quot;&gt;中：新上傳的 TP&lt;/span&gt;本次要比對的新內容&lt;/div&gt;
+  &lt;div class=&quot;mini&quot;&gt;&lt;span class=&quot;k&quot;&gt;右：舊 TP 內容&lt;/span&gt;目前 Option 留存的原 TP&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;callout note&quot;&gt;詳細說明與留意事項請見 🔗 Notion：TP Compare（置換新 TP 比對功能）。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">13</span><h2>TP Compare（置換新 TP 比對）</h2><span class="sectag">功能</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>當客人換版、發新 TP 時，用 TP Compare 比對新舊差異再決定要不要帶入：</p>
+<ul>
+  <li>點 <b>「…」</b> 上傳 New TP 進行 Compare。</li>
+  <li>一筆 TP 若有<b>兩個以上 BOM</b>，可由該欄選取。</li>
+  <li>按 <b>Tab</b> 可切換 Compare 帶入的項目。</li>
+</ul>
+<div class="grid3">
+  <div class="mini"><span class="k">左：目前 Option 資料</span>可能已被修改過</div>
+  <div class="mini"><span class="k">中：新上傳的 TP</span>本次要比對的新內容</div>
+  <div class="mini"><span class="k">右：舊 TP 內容</span>目前 Option 留存的原 TP</div>
+</div>
+<div class="callout note">詳細說明與留意事項請見 🔗 Notion：TP Compare（置換新 TP 比對功能）。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="TP Compare（置換新 TP 比對）" src="assets/page_14.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="merge" data-text="Merge Options（合併選項） 
+&lt;div class=&quot;callout tip&quot;&gt;&lt;b&gt;一句話：&lt;/b&gt;把同一款號下的&lt;b&gt;多個 Option 合併成「一個新的 Option」&lt;/b&gt;，數量自動加總，方便把多色/多版彙整成一條報價。&lt;/div&gt;
+&lt;p&gt;&lt;b&gt;操作步驟（取自教學影片）：&lt;/b&gt;&lt;/p&gt;
+&lt;ol class=&quot;flow&quot;&gt;
+  &lt;li&gt;&lt;b&gt;勾選&lt;/b&gt;要合併的多個 Option（每個 Option 卡片&lt;b&gt;右上角的勾選框&lt;/b&gt;）。&lt;/li&gt;
+  &lt;li&gt;點下方工具列的 &lt;b&gt;「Merge Options」&lt;/b&gt; 按鈕。&lt;/li&gt;
+  &lt;li&gt;系統在目前 master 款號下&lt;b&gt;新增一個合併後的新 Option&lt;/b&gt;：Remark 顯示 &lt;code&gt;Merge&lt;/code&gt;，&lt;b&gt;Qty 為各選項加總&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;跳出提示 &lt;span class=&quot;muted&quot;&gt;「Merge completed successfully. A new option has been added under the current master (&lt;b&gt;not saved yet&lt;/b&gt;)」&lt;/span&gt; → 記得&lt;b&gt;存檔&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;存檔成功顯示 &lt;span class=&quot;muted&quot;&gt;「Single Option Save Success」&lt;/span&gt;，合併完成。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&quot;callout note&quot;&gt;&lt;b&gt;範例：&lt;/b&gt;影片中合併 Option 1+2+3，數量 &lt;code&gt;7130 + 6830 + 15218 = 29178&lt;/code&gt; 自動加總到新的 Option 4。&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">14</span><h2>Merge Options（合併選項）</h2><span class="sectag">功能 · 影片</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<div class="callout tip"><b>一句話：</b>把同一款號下的<b>多個 Option 合併成「一個新的 Option」</b>，數量自動加總，方便把多色/多版彙整成一條報價。</div>
+<p><b>操作步驟（取自教學影片）：</b></p>
+<ol class="flow">
+  <li><b>勾選</b>要合併的多個 Option（每個 Option 卡片<b>右上角的勾選框</b>）。</li>
+  <li>點下方工具列的 <b>「Merge Options」</b> 按鈕。</li>
+  <li>系統在目前 master 款號下<b>新增一個合併後的新 Option</b>：Remark 顯示 <code>Merge</code>，<b>Qty 為各選項加總</b>。</li>
+  <li>跳出提示 <span class="muted">「Merge completed successfully. A new option has been added under the current master (<b>not saved yet</b>)」</span> → 記得<b>存檔</b>。</li>
+  <li>存檔成功顯示 <span class="muted">「Single Option Save Success」</span>，合併完成。</li>
+</ol>
+<div class="callout note"><b>範例：</b>影片中合併 Option 1+2+3，數量 <code>7130 + 6830 + 15218 = 29178</code> 自動加總到新的 Option 4。</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="Merge Options（合併選項）" src="assets/merge_001.jpg"></figure><figure class="figwrap"><img class="shot" loading="lazy" alt="Merge Options（合併選項）" src="assets/merge_005.jpg"></figure><figure class="figwrap"><img class="shot" loading="lazy" alt="Merge Options（合併選項）" src="assets/merge_007.jpg"></figure></div>
+  </div>
+</section>
+
+<section class="sec" id="batch" data-text="舊報價轉入大OS 
+&lt;p&gt;既有的舊報價 QS 資料可批次轉入大OS：&lt;/p&gt;
+&lt;ol class=&quot;flow&quot;&gt;
+  &lt;li&gt;點選 &lt;b&gt;「Batch BigOS」&lt;/b&gt;。&lt;/li&gt;
+  &lt;li&gt;&lt;b&gt;全選 or 單選&lt;/b&gt;欲轉入大OS 的 Option。&lt;/li&gt;
+  &lt;li&gt;點選 &lt;b&gt;「Add to BigOS」&lt;/b&gt; 即匯入。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&quot;callout note&quot;&gt;詳細說明與留意事項請見 🔗 Notion：如何把舊報價 QS 資料轉到大OS？&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">15</span><h2>舊報價轉入大OS</h2><span class="sectag">轉檔</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<p>既有的舊報價 QS 資料可批次轉入大OS：</p>
+<ol class="flow">
+  <li>點選 <b>「Batch BigOS」</b>。</li>
+  <li><b>全選 or 單選</b>欲轉入大OS 的 Option。</li>
+  <li>點選 <b>「Add to BigOS」</b> 即匯入。</li>
+</ol>
+<div class="callout note">詳細說明與留意事項請見 🔗 Notion：如何把舊報價 QS 資料轉到大OS？</div>
+</div>
+    <div class="imgcol"><figure class="figwrap"><img class="shot" loading="lazy" alt="舊報價轉入大OS" src="assets/page_15.png"></figure></div>
+  </div>
+</section>
+
+<section class="sec noimg" id="painpoints" data-text="目前使用系統遇到的痛點 
+&lt;div class=&quot;callout note&quot;&gt;下面已列目前同事回報的痛點。&lt;b&gt;你可以直接在下方表單新增自己的痛點&lt;/b&gt; → 填好欄位按「＋ 新增」即可。新增的內容會存在&lt;b&gt;這台電腦的瀏覽器&lt;/b&gt;裡（重開頁面仍在）。要彙整給大家時，按「📋 複製全部」貼回給負責人即可。&lt;/div&gt;
+&lt;table class=&quot;paintbl&quot;&gt;
+  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;痛點 / 問題&lt;/th&gt;&lt;th&gt;造成的影響&lt;/th&gt;&lt;th&gt;暫時做法 / 改善建議&lt;/th&gt;&lt;th&gt;狀態&lt;/th&gt;&lt;th&gt;操作&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+  &lt;tbody id=&quot;painSeed&quot;&gt;
+    &lt;tr&gt;&lt;td&gt;&lt;b&gt;系統速度非常慢&lt;/b&gt;&lt;/td&gt;&lt;td&gt;操作常要等待、需排隊，作業不順、拉長報價時間&lt;/td&gt;&lt;td class=&quot;fill&quot;&gt;（待補：避開尖峰時段／反映系統端優化）&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;tag tbc&quot;&gt;待跟進&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;muted&quot;&gt;內建&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;&lt;b&gt;需人工 key in 的資料仍多&lt;/b&gt;&lt;br&gt;&lt;span class=&quot;muted&quot;&gt;例：副料需一項一項輸入&lt;/span&gt;&lt;/td&gt;&lt;td&gt;建檔耗時、容易拖慢整體報價作業&lt;/td&gt;&lt;td&gt;建議副料能&lt;b&gt;「單一項 / 批次帶入」&lt;/b&gt;，不必逐筆 key，作業會快很多 &lt;span class=&quot;tag tbc&quot;&gt;改善建議&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;tag tbc&quot;&gt;待跟進&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;muted&quot;&gt;內建&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+  &lt;tbody id=&quot;painUser&quot;&gt;&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class=&quot;painform&quot;&gt;
+  &lt;label&gt;痛點 / 問題&lt;input id=&quot;f_p&quot; placeholder=&quot;例：匯出報表常失敗&quot;&gt;&lt;/label&gt;
+  &lt;label&gt;造成的影響&lt;input id=&quot;f_i&quot; placeholder=&quot;例：要重跑很多次&quot;&gt;&lt;/label&gt;
+  &lt;label&gt;暫時做法 / 建議&lt;input id=&quot;f_a&quot; placeholder=&quot;例：希望可背景匯出&quot;&gt;&lt;/label&gt;
+  &lt;label&gt;狀態&lt;input id=&quot;f_s&quot; placeholder=&quot;待跟進&quot;&gt;&lt;/label&gt;
+  &lt;button class=&quot;btn&quot; id=&quot;painAdd&quot; type=&quot;button&quot;&gt;＋ 新增&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;painbar&quot;&gt;
+  &lt;button class=&quot;btn ghost&quot; id=&quot;painCopy&quot; type=&quot;button&quot;&gt;📋 複製全部&lt;/button&gt;
+  &lt;span class=&quot;muted&quot; style=&quot;font-size:.82rem;align-self:center&quot;&gt;＊新增內容僅存於本機瀏覽器；清除瀏覽器資料會消失，重要痛點請按「複製全部」回傳彙整。&lt;/span&gt;
+&lt;/div&gt;
+">
+  <div class="sechead"><span class="secnum">16</span><h2>目前使用系統遇到的痛點</h2><span class="sectag">痛點 · 持續補充</span></div>
+  <div class="seccontent">
+    <div class="textcol">
+<div class="callout note">下面已列目前同事回報的痛點。<b>你可以直接在下方表單新增自己的痛點</b> → 填好欄位按「＋ 新增」即可。新增的內容會存在<b>這台電腦的瀏覽器</b>裡（重開頁面仍在）。要彙整給大家時，按「📋 複製全部」貼回給負責人即可。</div>
+<table class="paintbl">
+  <thead><tr><th>痛點 / 問題</th><th>造成的影響</th><th>暫時做法 / 改善建議</th><th>狀態</th><th>操作</th></tr></thead>
+  <tbody id="painSeed">
+    <tr><td><b>系統速度非常慢</b></td><td>操作常要等待、需排隊，作業不順、拉長報價時間</td><td class="fill">（待補：避開尖峰時段／反映系統端優化）</td><td><span class="tag tbc">待跟進</span></td><td class="muted">內建</td></tr>
+    <tr><td><b>需人工 key in 的資料仍多</b><br><span class="muted">例：副料需一項一項輸入</span></td><td>建檔耗時、容易拖慢整體報價作業</td><td>建議副料能<b>「單一項 / 批次帶入」</b>，不必逐筆 key，作業會快很多 <span class="tag tbc">改善建議</span></td><td><span class="tag tbc">待跟進</span></td><td class="muted">內建</td></tr>
+  </tbody>
+  <tbody id="painUser"></tbody>
+</table>
+<div class="painform">
+  <label>痛點 / 問題<input id="f_p" placeholder="例：匯出報表常失敗"></label>
+  <label>造成的影響<input id="f_i" placeholder="例：要重跑很多次"></label>
+  <label>暫時做法 / 建議<input id="f_a" placeholder="例：希望可背景匯出"></label>
+  <label>狀態<input id="f_s" placeholder="待跟進"></label>
+  <button class="btn" id="painAdd" type="button">＋ 新增</button>
+</div>
+<div class="painbar">
+  <button class="btn ghost" id="painCopy" type="button">📋 複製全部</button>
+  <span class="muted" style="font-size:.82rem;align-self:center">＊新增內容僅存於本機瀏覽器；清除瀏覽器資料會消失，重要痛點請按「複製全部」回傳彙整。</span>
+</div>
+</div>
+    <div class="imgcol"></div>
+  </div>
+</section>
+
+    </div>
+    <div class="disc">
+      <b>使用聲明（需人工複核）：</b>本文件由 AI 依公司原始操作手冊與教學影片整理，內容區分為「系統功能事實」與「AI 重新編寫之說明」，<b>僅供內部教育訓練參考</b>，正式作業仍以系統實際畫面與原作者/權責單位最新公告為準。標示 🔗 之項目請回查 Notion 取得完整說明。資料日期 2026-05-04。
+    </div>
+  </div>
+</div>
+<div class="lb" id="lb"><img id="lbimg" src="" alt=""></div>
+<script>
+// lightbox
+var lb=document.getElementById('lb'),lbimg=document.getElementById('lbimg');
+document.querySelectorAll('.shot').forEach(function(im){im.addEventListener('click',function(){lbimg.src=im.src;lb.classList.add('open');});});
+lb.addEventListener('click',function(){lb.classList.remove('open');lbimg.src='';});
+// scrollspy
+var links=[].slice.call(document.querySelectorAll('#nav a'));
+var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+function spy(){var y=window.scrollY+120,idx=0;secs.forEach(function(s,i){if(s&&s.offsetTop<=y)idx=i;});links.forEach(function(a,i){a.classList.toggle('active',i===idx);});}
+window.addEventListener('scroll',spy);spy();
+links.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(a.getAttribute('href'));t.scrollIntoView({behavior:'smooth'});});});
+// search filter
+var q=document.getElementById('q');
+q.addEventListener('input',function(){
+  var v=q.value.trim().toLowerCase();
+  document.querySelectorAll('.sec').forEach(function(s){
+    var hit=!v||(s.getAttribute('data-text')||'').toLowerCase().indexOf(v)>=0;
+    s.classList.toggle('hide',!hit);
+  });
+  links.forEach(function(a){
+    var id=a.getAttribute('href');var s=document.querySelector(id);
+    a.classList.toggle('hide',s&&s.classList.contains('hide'));
+  });
+});
+// pain points: manual add + localStorage persistence
+(function(){
+  var KEY='osbible_painpoints_v1';
+  var tb=document.getElementById('painUser');
+  if(!tb) return;
+  function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return [];}}
+  function save(d){try{localStorage.setItem(KEY,JSON.stringify(d));}catch(e){}}
+  function esc(s){var d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+  function render(){
+    var d=load();tb.innerHTML='';
+    d.forEach(function(r,i){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td>'+esc(r.p)+'</td><td>'+esc(r.i)+'</td><td>'+esc(r.a)+'</td><td><span class="tag tbc">'+esc(r.s||'待跟進')+'</span></td><td><button class="btn del" type="button" data-i="'+i+'">刪除</button></td>';
+      tb.appendChild(tr);
+    });
+    tb.querySelectorAll('.del').forEach(function(b){b.onclick=function(){var d=load();d.splice(+b.getAttribute('data-i'),1);save(d);render();};});
+  }
+  var add=document.getElementById('painAdd');
+  if(add) add.onclick=function(){
+    var p=document.getElementById('f_p'),i=document.getElementById('f_i'),a=document.getElementById('f_a'),s=document.getElementById('f_s');
+    if(!p.value.trim()){p.focus();return;}
+    var d=load();d.push({p:p.value.trim(),i:i.value.trim(),a:a.value.trim(),s:s.value.trim()||'待跟進'});save(d);
+    p.value=i.value=a.value=s.value='';render();p.focus();
+  };
+  // Enter in any field = add
+  ['f_p','f_i','f_a','f_s'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();add.click();}});});
+  var cp=document.getElementById('painCopy');
+  if(cp) cp.onclick=function(){
+    var rows=[];
+    document.querySelectorAll('#painSeed tr,#painUser tr').forEach(function(tr){
+      var c=tr.querySelectorAll('td');
+      if(c.length>=4) rows.push(c[0].innerText.trim()+' | '+c[1].innerText.trim()+' | '+c[2].innerText.trim()+' | '+c[3].innerText.trim());
+    });
+    var txt='大OS 目前使用痛點清單\n痛點 | 影響 | 暫時做法/建議 | 狀態\n'+rows.join('\n');
+    function done(){var t=cp.textContent;cp.textContent='✓ 已複製!';setTimeout(function(){cp.textContent=t;},1500);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){window.prompt('複製下方文字：',txt);});}
+    else{window.prompt('複製下方文字：',txt);}
+  };
+  render();
+})();
+</script>
+</body>
+</html>
